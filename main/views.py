@@ -4,6 +4,12 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import UserRegisterForm, UserProfileForm, PostForm, CommentForm
 from .models import Post, Comment
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import Order
+from .serializers import OrderSerializer
+import requests
+from django.conf import settings
 
 # Registration
 def register(request):
@@ -135,3 +141,46 @@ def edit_profile(request):
     else:
         form = UserProfileForm(instance=request.user.userprofile)
     return render(request, 'main/edit_profile.html', {'form': form})
+
+@api_view(['POST'])
+def create_order(request):
+    serializer = OrderSerializer(data=request.data)
+    if serializer.is_valid():
+        order = serializer.save()
+        return Response({
+            "message": "Order created",
+            "order_id": order.id
+        })
+    return Response(serializer.errors)
+
+
+
+@api_view(['POST'])
+def initiate_payment(request):
+    order_id = request.data.get("order_id")
+
+    url = "https://sandbox.sslcommerz.com/gwprocess/v4/api.php"
+
+    data = {
+        "store_id": "your_store_id",
+        "store_passwd": "your_store_password",
+        "total_amount": 499,
+        "currency": "BDT",
+        "tran_id": str(order_id),
+        "success_url": "http://localhost:5173/success",
+        "fail_url": "http://localhost:5173/fail",
+        "cancel_url": "http://localhost:5173/cancel",
+        "cus_name": "Customer",
+        "cus_email": "test@mail.com",
+        "cus_phone": "01700000000",
+        "cus_add1": "Dhaka",
+        "cus_city": "Dhaka",
+        "cus_country": "Bangladesh",
+        "shipping_method": "NO",
+        "product_name": "PhiBook Premium",
+        "product_category": "Subscription",
+        "product_profile": "general",
+    }
+
+    response = requests.post(url, data=data)
+    return Response(response.json())

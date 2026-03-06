@@ -1,5 +1,6 @@
 from django.urls import path,include
 from . import views
+from .views import create_order
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
@@ -16,4 +17,6 @@ urlpatterns = [
     path('delete_comment/<int:comment_id>/', views.delete_comment, name='delete_comment'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
     path('api/', include('main.api_urls')),
+    path("create-order/", create_order),
+    path("payment/", initiate_payment),
 ]
