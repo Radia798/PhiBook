@@ -15,3 +15,5 @@ venv/
 # IDE files
 .vscode/
 .idea/
+
+/staticfiles/

@@ -1,6 +1,8 @@
 from django.urls import path,include
 from . import views
 from .views import create_order, get_posts
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
@@ -21,4 +23,4 @@ urlpatterns = [
     path("posts/", get_posts),
     path("order/", create_order),
     path("api/register/", views.api_register),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
