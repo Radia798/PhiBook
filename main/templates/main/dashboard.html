@@ -1,0 +1,56 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<h2 class="text-2xl font-bold mb-4">Latest Posts</h2>
+
+{% for post in posts %}
+<div class="bg-white p-4 rounded shadow mb-4">
+
+    <p class="font-semibold">{{ post.user.username }}</p>
+    <p class="text-gray-700 mt-2">{{ post.text }}</p>
+
+    {% if post.image %}
+        <img src="{{ post.image.url }}" class="mt-3 rounded">
+    {% endif %}
+
+    {% if post.youtube_url %}
+        <iframe class="w-full mt-3" height="250"
+            src="{{ post.youtube_url|cut:'watch?v='|add:'embed/' }}"
+            allowfullscreen></iframe>
+    {% endif %}
+
+    <div class="mt-3 flex items-center space-x-4">
+        <a href="{% url 'like_post' post.id %}"
+           class="text-blue-600 font-semibold">
+            ❤️ {{ post.total_likes }}
+        </a>
+    </div>
+
+    <!-- COMMENTS -->
+    <div class="mt-4">
+        <h4 class="font-semibold">Comments</h4>
+
+        {% for comment in post.comments.all %}
+            <div class="text-sm text-gray-800 mt-1">
+                <b>{{ comment.user.username }}</b>: {{ comment.text }}
+
+                {% if comment.user == user %}
+                    <a href="{% url 'edit_comment' comment.id %}" class="text-blue-600 ml-2">Edit</a>
+                    <a href="{% url 'delete_comment' comment.id %}" class="text-red-600 ml-2">Delete</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <form method="POST" action="{% url 'add_comment' post.id %}" class="mt-2">
+            {% csrf_token %}
+            <input name="text" placeholder="Add comment..."
+                   class="w-full border p-2 rounded">
+        </form>
+    </div>
+
+</div>
+{% empty %}
+<p>No posts yet.</p>
+{% endfor %}
+
+{% endblock %}
