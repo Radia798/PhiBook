@@ -41,9 +41,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'main',
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -158,3 +160,6 @@ SIMPLE_JWT = {
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/' 
+
+
+CORS_ALLOW_ALL_ORIGINS = True

@@ -1,6 +1,6 @@
 from django.urls import path,include
 from . import views
-from .views import create_order
+from .views import create_order, get_posts
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
@@ -18,5 +18,6 @@ urlpatterns = [
     path('edit_profile/', views.edit_profile, name='edit_profile'),
     path('api/', include('main.api_urls')),
     path("create-order/", create_order),
-    path("payment/", initiate_payment),
+    path("posts/", get_posts),
+    path("order/", create_order),
 ]
