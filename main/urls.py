@@ -20,4 +20,5 @@ urlpatterns = [
     path("create-order/", create_order),
     path("posts/", get_posts),
     path("order/", create_order),
+    path("api/register/", views.api_register),
 ]

@@ -8,8 +8,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Order, Post
 from .serializers import OrderSerializer,PostSerializer
-import requests
+from django.contrib.auth.models import User
 from django.conf import settings
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 
 # Registration
 def register(request):
@@ -194,6 +196,7 @@ def get_posts(request):
 
 
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def create_order(request):
     serializer = OrderSerializer(data=request.data)
 
@@ -202,3 +205,37 @@ def create_order(request):
         return Response({"message": "Order created successfully"})
 
     return Response(serializer.errors)
+
+# @api_view(["POST"])
+# @permission_classes([AllowAny])
+# def api_register(request):
+#     username = request.data.get("username")
+#     password = request.data.get("password")
+
+#     if not username or not password:
+#         return Response({"error": "Username and password required"}, status=400)
+
+#     if User.objects.filter(username=username).exists():
+#         return Response({"error": "Username already exists"}, status=400)
+
+#     User.objects.create_user(username=username, password=password)
+
+#     return Response({"message": "User created successfully"})
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def api_register(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    if not username or not password:
+        return Response({"error": "Username and password required"}, status=400)
+
+    if User.objects.filter(username=username).exists():
+        return Response({"error": "Username already exists"}, status=400)
+
+    try:
+        user = User.objects.create_user(username=username, password=password)
+        return Response({"message": "User created successfully"})
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
